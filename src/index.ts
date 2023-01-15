@@ -6,6 +6,7 @@ import { execSync } from "child_process";
 import * as fs from "fs";
 import which from "which";
 import type { Code } from "mdast";
+import jsdom from "jsdom";
 
 type RemarkMermaidOptions = {
   themes: string[];
@@ -15,6 +16,30 @@ const defaultOptions = {
   themes: ["default"],
 };
 
+/**
+ * Reprefixing the IDs of definitions in SVG in order to show multiple diagrams
+ * with different themes on the same page.
+ */
+const postprocess = (svgContent: string, prefix: string): string => {
+  const svg = new jsdom.JSDOM(svgContent);
+  const defines = [...svg.window.document.querySelectorAll("defs marker")];
+
+  const replacements = [];
+
+  for (const define of defines) {
+    replacements.push([`url(#${define.id})`, `url(#${prefix}${define.id})`]);
+    define.id = prefix + define.id;
+  }
+
+  return replacements.reduce(
+    (content, [before, after]) => content.replaceAll(before, after),
+    svg.window.document.body.innerHTML
+  );
+};
+
+/**
+ * Renders the given mermaid content to SVG.
+ */
 const renderSVG = (mermaidContent: string, theme: string): string => {
   const prefix = `/tmp/mermaid-${Math.random()}`;
   fs.writeFileSync(`${prefix}.mmd`, mermaidContent);
@@ -25,7 +50,10 @@ const renderSVG = (mermaidContent: string, theme: string): string => {
       `-t ${theme} ` +
       `-b transparent`
   );
-  return fs.readFileSync(`${prefix}.svg`, "utf-8");
+  return postprocess(
+    fs.readFileSync(`${prefix}.svg`, "utf-8"),
+    `remark-mermaid-postprocess-${theme}-`
+  );
 };
 
 export default function remarkMermaid(

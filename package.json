@@ -19,11 +19,13 @@
     "build": "tsc"
   },
   "dependencies": {
+    "jsdom": "^21.0.0",
     "unist-util-visit": "^4.1.1",
     "vfile": "^5.3.6",
     "which": "^3.0.0"
   },
   "devDependencies": {
+    "@types/jsdom": "^20.0.1",
     "@types/mdast": "^3.0.10",
     "@types/node": "^18.11.18",
     "@types/which": "^2.0.1",
