@@ -7,6 +7,7 @@ import * as fs from "fs";
 import which from "which";
 import type { Code } from "mdast";
 import jsdom from "jsdom";
+import * as os from "os";
 
 type RemarkMermaidOptions = {
   themes: string[];
@@ -41,7 +42,7 @@ const postprocess = (svgContent: string, prefix: string): string => {
  * Renders the given mermaid content to SVG.
  */
 const renderSVG = (mermaidContent: string, theme: string): string => {
-  const prefix = `/tmp/mermaid-${Math.random()}`;
+  const prefix = `${os.tmpdir()}/mermaid-${Math.random()}`;
   fs.writeFileSync(`${prefix}.mmd`, mermaidContent);
   execSync(
     `${which.sync("mmdc")} ` +
