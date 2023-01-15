@@ -43,7 +43,7 @@ export default function remarkMermaid(
 
       const newNodes = options.themes.map((theme) => ({
         type: "html",
-        value: `<div class="remark-mermaid-${theme}">${renderSVG(
+        value: `<div class="remark-mermaid remark-mermaid-${theme}">${renderSVG(
           value,
           theme
         )}</div>`,
