@@ -1,6 +1,6 @@
 {
   "name": "@southball/remark-mermaid",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "license": "MIT",
   "description": "Inline Mermaid conversion for Remark",
   "type": "module",
