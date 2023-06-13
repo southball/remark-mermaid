@@ -23,6 +23,10 @@ const defaultOptions = {
  */
 const postprocess = (svgContent: string, prefix: string): string => {
   const svg = new jsdom.JSDOM(svgContent);
+
+  const svgId = svg.window.document.querySelector("svg")!.id;
+  const replacementSvgId = `${prefix}${svgId}`;
+
   const defines = [...svg.window.document.querySelectorAll("defs marker")];
 
   const replacements = [];
@@ -33,7 +37,8 @@ const postprocess = (svgContent: string, prefix: string): string => {
   }
 
   return replacements.reduce(
-    (content, [before, after]) => content.replaceAll(before, after),
+    (content, [before, after]) =>
+      content.replaceAll(before, after).replaceAll(svgId, replacementSvgId),
     svg.window.document.body.innerHTML
   );
 };
